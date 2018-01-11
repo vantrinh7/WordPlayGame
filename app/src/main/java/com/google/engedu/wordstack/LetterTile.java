@@ -35,6 +35,7 @@ public class LetterTile extends android.support.v7.widget.AppCompatTextView {
         super(context);
         this.letter = letter;
         setText(letter.toString());
+        setTextColor(Color.BLACK);
         setTextAlignment(TEXT_ALIGNMENT_CENTER);
         setHeight(TILE_SIZE);
         setWidth(TILE_SIZE);

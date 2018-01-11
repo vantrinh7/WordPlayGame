@@ -30,23 +30,44 @@ public class StackedLayout extends LinearLayout {
     }
 
     public void push(View tile) {
-        View view = this.getRootView();
-        this.removeView(view);
+        View currentView = new View(getContext());
 
+        // If tiles stack is not empty, remove the tile on top of the stack
+        if (!tiles.empty()) {
+            currentView = peek();
+            this.removeView(currentView);
+        }
+        // Add the tile to be pushed into the stack
         tiles.push(tile);
+
+        // Add to the view
         this.addView(tile);
     }
 
     public View pop() {
-        View popped = tiles.pop();
-        this.removeView(popped);
+        View popped = new View(getContext());
 
-        this.addView(this.getRootView());
-        return popped;
+        // If tile stack is not empty, pop and remove tile on top of the stack
+        if (!tiles.empty()) {
+            popped = tiles.pop();
+            this.removeView(popped);
+
+            // If peeking doesn't return null value, add the peek result to the view
+            if (peek() != null) {
+                this.addView(peek());
+            }
+            // Return the popped result
+            return popped;
+        }
+        return null;
     }
 
     public View peek() {
-        return tiles.peek();
+        // If the tiles stack is not empty, return the one on top of the stack
+        if (!tiles.empty()) {
+            return tiles.peek();
+        }
+        return null;
     }
 
     public boolean empty() {

@@ -169,11 +169,11 @@ public class MainActivity extends AppCompatActivity {
         int counter2 = 0;
         String scrambled = "";
 
+
         // Randomly pick either word 1 or 2 to choose letter from, and put letters into a string
         while ((counter1 < WORD_LENGTH) || (counter2 < WORD_LENGTH)){
             // Randomly pick either number 1 or 2
             int randomPick = random.nextInt(2 + 1 ) + 1;
-
 
             if ((randomPick == 1) && (counter1 < WORD_LENGTH)) {
                 scrambled = scrambled + word1Char[counter1];
@@ -184,6 +184,13 @@ public class MainActivity extends AppCompatActivity {
                 counter2++;
             }
         }
+
+        char[] scrambledChar = scrambled.toCharArray();
+        for (int i = scrambledChar.length - 1; i > -1 ; i--) {
+            LetterTile newTile = new LetterTile(getBaseContext(), scrambledChar[i]);
+            stackedLayout.push(newTile);
+        }
+
         messageBox.setText(scrambled);
         return true;
     }
