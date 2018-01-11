@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     private StackedLayout stackedLayout;
     private String word1, word2;
     private LinearLayout word1LinearLayout, word2LinearLayout;
-    private Stack<LetterTile> placedTiles;
+    private Stack<LetterTile> placedTiles = new Stack<LetterTile>();;
     private String TAG = "My activity";
 
     @Override
@@ -71,14 +71,19 @@ public class MainActivity extends AppCompatActivity {
         }
         LinearLayout verticalLayout = (LinearLayout) findViewById(R.id.vertical_layout);
         stackedLayout = new StackedLayout(this);
+
         verticalLayout.addView(stackedLayout, 3);
 
         word1LinearLayout = (LinearLayout) findViewById(R.id.word1);
-        word1LinearLayout.setOnTouchListener(new TouchListener());
-        //word1LinearLayout.setOnDragListener(new DragListener());
+        // Switching onTouch listener and onDrag listener here
+        //word1LinearLayout.setOnTouchListener(new TouchListener());
+        word1LinearLayout.setOnDragListener(new DragListener());
+
         word2LinearLayout = (LinearLayout) findViewById(R.id.word2);
-        word2LinearLayout.setOnTouchListener(new TouchListener());
-        //word2LinearLayout.setOnDragListener(new DragListener());
+
+        // Switching onTouch listener and onDrag listener here
+        //word2LinearLayout.setOnTouchListener(new TouchListener());
+        word2LinearLayout.setOnDragListener(new DragListener());
         handleStartButton();
     }
 
@@ -87,17 +92,18 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
             if (event.getAction() == MotionEvent.ACTION_DOWN && !stackedLayout.empty()) {
+                // Show the tiles in the text views of word 1 and 2
                 LetterTile tile = (LetterTile) stackedLayout.peek();
                 tile.moveToViewGroup((ViewGroup) v);
+
+                // Keep track of the placed tiles
+                placedTiles.push(tile);
+
+                // Once all letters are used, show the correct answer
                 if (stackedLayout.empty()) {
                     TextView messageBox = (TextView) findViewById(R.id.message_box);
                     messageBox.setText(word1 + " " + word2);
                 }
-                /**
-                 **
-                 **  YOUR CODE GOES HERE
-                 **
-                 **/
                 return true;
             }
             return false;
@@ -126,18 +132,18 @@ public class MainActivity extends AppCompatActivity {
                     v.invalidate();
                     return true;
                 case DragEvent.ACTION_DROP:
-                    // Dropped, reassign Tile to the target Layout
+                    // Show the tiles in the text views of word 1 and 2
                     LetterTile tile = (LetterTile) event.getLocalState();
                     tile.moveToViewGroup((ViewGroup) v);
+
+                    // Keep track of the placed tiles
+                    placedTiles.push(tile);
+
+                    // Once all letters are used, show the correct answer
                     if (stackedLayout.empty()) {
                         TextView messageBox = (TextView) findViewById(R.id.message_box);
                         messageBox.setText(word1 + " " + word2);
                     }
-                    /**
-                     **
-                     **  YOUR CODE GOES HERE
-                     **
-                     **/
                     return true;
             }
             return false;
@@ -165,9 +171,7 @@ public class MainActivity extends AppCompatActivity {
         TextView messageBox = (TextView) findViewById(R.id.message_box);
         // Get words with random index from 0 to words.size() - 1
         word1 = words.get(random.nextInt(words.size()));
-        Log.d(TAG, "Word 1 is: " + word1);
         word2 = words.get(random.nextInt(words.size()));
-        Log.d(TAG, "Word 2 is: " + word2);
 
         // Convert words to character array so as to later pick the letters
 
@@ -200,17 +204,18 @@ public class MainActivity extends AppCompatActivity {
             stackedLayout.push(newTile);
         }
 
-        messageBox.setText(scrambled);
+        //messageBox.setText(scrambled);
         return true;
     }
 
-
     public boolean onUndo(View view) {
-        /**
-         **
-         **  YOUR CODE GOES HERE
-         **
-         **/
-        return true;
+        if (!placedTiles.empty() && !stackedLayout.empty()) {
+            LetterTile tile = placedTiles.pop();
+             if (tile != null) {
+                 tile.moveToViewGroup(stackedLayout);
+             }
+            return true;
+        }
+        return false;
     }
 }

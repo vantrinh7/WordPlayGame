@@ -53,9 +53,11 @@ public class LetterTile extends android.support.v7.widget.AppCompatTextView {
             setVisibility(View.VISIBLE);
         } else {
             ViewGroup owner = (ViewGroup) parent;
-            owner.removeView(this);
-            ((StackedLayout) targetView).push(this);
-            unfreeze();
+            if (owner != null) {
+                owner.removeView(this);
+                ((StackedLayout) targetView).push(this);
+                unfreeze();
+            }
         }
     }
 
@@ -69,11 +71,15 @@ public class LetterTile extends android.support.v7.widget.AppCompatTextView {
 
     @Override
     public boolean onTouchEvent(MotionEvent motionEvent) {
-        /**
-         **
-         **  YOUR CODE GOES HERE
-         **
-         **/
-        return super.onTouchEvent(motionEvent);
+        // When tile is not frozen, and user starts touching the view (during ACTION_DOWN), start the drag
+        if (!frozen && (motionEvent.getAction() == MotionEvent.ACTION_DOWN)) {
+            //Start the drag
+            this.startDrag(ClipData.newPlainText("",""), new View.DragShadowBuilder(this), this, 0);
+            //Return true because we acknowledged the touch event
+            return true;
+        } else {
+            // If tile is frozen and action wasn't an ACTION_DOWN action, do the default
+            return super.onTouchEvent(motionEvent);
+        }
     }
 }
