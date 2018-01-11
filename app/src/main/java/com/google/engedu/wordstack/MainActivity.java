@@ -46,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private Random random = new Random();
     private StackedLayout stackedLayout;
     private String word1, word2;
+    private LinearLayout word1LinearLayout, word2LinearLayout;
+    private Stack<LetterTile> placedTiles;
     private String TAG = "My activity";
 
     @Override
@@ -71,10 +73,10 @@ public class MainActivity extends AppCompatActivity {
         stackedLayout = new StackedLayout(this);
         verticalLayout.addView(stackedLayout, 3);
 
-        View word1LinearLayout = findViewById(R.id.word1);
+        word1LinearLayout = (LinearLayout) findViewById(R.id.word1);
         word1LinearLayout.setOnTouchListener(new TouchListener());
         //word1LinearLayout.setOnDragListener(new DragListener());
-        View word2LinearLayout = findViewById(R.id.word2);
+        word2LinearLayout = (LinearLayout) findViewById(R.id.word2);
         word2LinearLayout.setOnTouchListener(new TouchListener());
         //word2LinearLayout.setOnDragListener(new DragListener());
         handleStartButton();
@@ -153,6 +155,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public boolean onStartGame(View view) {
+        // Clicking the start button when there's nothing in the stackLayout removes all views
+        if (stackedLayout.empty()) {
+            word1LinearLayout.removeAllViews();
+            word2LinearLayout.removeAllViews();
+            stackedLayout.clear();
+        }
+
         TextView messageBox = (TextView) findViewById(R.id.message_box);
         // Get words with random index from 0 to words.size() - 1
         word1 = words.get(random.nextInt(words.size()));
@@ -194,7 +203,6 @@ public class MainActivity extends AppCompatActivity {
         messageBox.setText(scrambled);
         return true;
     }
-
 
 
     public boolean onUndo(View view) {
