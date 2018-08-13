@@ -1,7 +1,6 @@
 # Word Stack
 
 This program creates a game to solve scrambled words. In this game, player is first given two empty boxes that will hold letters.
-
 <br>
 <br>
 ![start](misc/start.png)
